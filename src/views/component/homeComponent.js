@@ -1,11 +1,14 @@
 import {React,useState} from "react";
-import { Icon,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, TableRow } from "semantic-ui-react";
+import { Rail,Icon,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, TableRow } from "semantic-ui-react";
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import './homeComponent.css'
 
 let myStorage = window.localStorage; // 로컬스토리지 선언
-let total=0;
+
+//로컬스토리지는 도메인만 같으면 값을 공유함
+//그러므로 사용자의 아이디로 url을 달리 해야할듯
+//  ex) localhost:3000/start/joonmoogo
 
 function TableGroup(props){ // 기본
     let [table,setTable]=useState([
@@ -26,34 +29,70 @@ function TableGroup(props){ // 기본
       {tableNumber:15,tableName:'혼밥'},
     ]);
 
+    //서버에서 받을 데이터 가입시 기본설정
+
     //현재 네비게이션 이동시에 메뉴가 추가된 table state가 초기화되어 문제
     //table state를 상위에 두자 => Redux  => Redux store 사용하면 컴포넌트를 갈아치워도 상태 유지
     //하지만 새로고침하면 또 날아감 => localStorage나 sessionStorage에 저장.
     //두 가지를 같이 사용한 라이브러리 redux persist라는게 존재함. => 참고하자.
 
     let [clickedTable, setClickedTable] = useState();
+
     let [menuList, setMenuList] = useState([
-      {product:'삼선짬뽕',price:9000},
-      {product:'군만두',price:3000},
-      {product:'쌀국수',price:12000},
-      {product:'짜사이',price:2000},
-      {product:'코코넛',price:1000},
-      {product:'반미',price:1500},
+      {product:'삼선짬뽕',price:9000,count:0},
+      {product:'군만두',price:3000,count:0},
+      {product:'쌀국수',price:12000,count:0},
+      {product:'짜사이',price:2000,count:0},
+      {product:'코코넛',price:1000,count:0},
+      {product:'반미',price:1500,count:0},
     ]);
 
+    //서버에서 받을 데이터 가입시 기본 설정
+
+    function clearMenuCount(){
+      setMenuList([
+        {product:'삼선짬뽕',price:9000,count:0},
+        {product:'군만두',price:3000,count:0},
+        {product:'쌀국수',price:12000,count:0},
+        {product:'짜사이',price:2000,count:0},
+        {product:'코코넛',price:1000,count:0},
+        {product:'반미',price:1500,count:0},
+      ])
+    }
+    // count개수 초기화 해주는 함수
+
     let [temporaryOrder,setTemporaryOrder] = useState([]);
+
+    //주문 전에 잠깐 노출되는 배열
 
     const selectedTable = table.find((e)=>{
       return(
         e.tableNumber==clickedTable
       )
     });
+    
+    // 선택한 테이블
+    
 
     
 
     // let a = useSelector((state)=>{return state});
     let [tableColor,setTableColor] = useState();
+   
+    // function total(e){
+    //   let total = 0;
+    //   if(e ){
+    //   let item = JSON.parse(myStorage.getItem(e));
+    //   item.map((e)=>{
+    //     total += e.price;
+    //   })
+    //   return total;
+    // }
+      
+    //   return 0;
+    // }
 
+    let [total,setTotal] = useState(0);
     return(
         <>
         {!clickedTable ? 
@@ -76,15 +115,16 @@ function TableGroup(props){ // 기본
                     ?<Card.Description content=''/> 
                     :JSON.parse(myStorage.getItem(e.tableNumber)).map((e)=>{
                       return(
-                      <Card.Description style={{color: 'teal'}} content={e.product}/>
+                      <Card.Description style={{color: 'teal'}} content={`${e.product} ${e.count}`}/>
                       )
                       
                     }) }
-     
+                  
                   </Card.Content>
                 </Card>
             )
         })}
+                  
         </Card.Group> 
         :<Grid columns='equal' relaxed>
           <Grid.Row>
@@ -96,7 +136,7 @@ function TableGroup(props){ // 기본
                   <Table.Row>
                       <Table.HeaderCell>상품명</Table.HeaderCell>
                       <Table.HeaderCell>가격</Table.HeaderCell>
-                      <Table.HeaderCell> </Table.HeaderCell>
+                      <Table.HeaderCell>수량</Table.HeaderCell>
                       
                   </Table.Row>
                   </Table.Header>
@@ -111,45 +151,42 @@ function TableGroup(props){ // 기본
                       <>
                       {
                       JSON.parse(myStorage.getItem((clickedTable).toString())).map((e)=>{
+                                                
                         return(
+                          
                           <TableRow>
+                            
                             <Table.Cell>{e.product}</Table.Cell>
                             <Table.Cell>{e.price}</Table.Cell>
-                            <Table.Cell><Button onClick={()=>{
-                              console.log('delete button was clicked');
-                            }}>❌</Button></Table.Cell>
+                            <Table.Cell>{e.count}</Table.Cell>
                           </TableRow>
                         )
                       })
                     }
                     {
                        temporaryOrder.map((e)=>{
+                        
                         return(
                           <TableRow>
                             <Table.Cell>{e.product}</Table.Cell>
                             <Table.Cell>{e.price}</Table.Cell>
-                            <Table.Cell><Button onClick={()=>{
-                              console.log('delete button was clicked');
-                              
-                            }}>❌</Button></Table.Cell>
+                            <Table.Cell>{e.count}</Table.Cell>
                           </TableRow>
                         )
                       })
                     }
                     </>
                       :
-                      temporaryOrder.map((e)=>{
- 
+                      temporaryOrder.map((e)=>{ 
                         return(
                           <TableRow>
                             <Table.Cell>{e.product}</Table.Cell>
                             <Table.Cell>{e.price}</Table.Cell>
-                            <Table.Cell><Button onClick={()=>{
-                              console.log('delete button was clicked');
-                              
-                            }}>❌</Button></Table.Cell>
+                            <Table.Cell>{e.count}</Table.Cell>
                           </TableRow>
+                          
                         )
+                        
                       })
                       
                     }
@@ -158,13 +195,15 @@ function TableGroup(props){ // 기본
               </Table>
                   </Segment>
                   <Segment>
-                    <h1>총 33,000원</h1>
+                    
+                    <h1>{`가격: ${total}`}</h1>
                   </Segment>
               </Grid.Column>
               <Grid.Column>
                   <Segment>메뉴<Button secondary floated="right" onClick={()=>{
                     setClickedTable();
                     setTemporaryOrder([]);
+                    clearMenuCount();
                   }}>X</Button></Segment>
                   <Segment>
                     <Card.Group itemsPerRow={2}>
@@ -173,8 +212,15 @@ function TableGroup(props){ // 기본
                         return(
 
                         <Card onClick={()=>{
-                          temporaryOrder.push(e);
-                          setTemporaryOrder([...temporaryOrder]);
+                          
+                          e.tableNumber = selectedTable.tableNumber;
+                          e.time = new Date().getTime();
+                          e.count = e.count + 1;
+                          // temporaryOrder.push(e);
+                          // (e.count ==1 ? temporaryOrder.push(e) : null)
+                          if(e.count ==1) temporaryOrder.push(e);
+                          setTemporaryOrder([...temporaryOrder]);                          
+                          
                         }}>
                           <Card.Content>
                             <Card.Header content={e.product}></Card.Header>
@@ -196,25 +242,42 @@ function TableGroup(props){ // 기본
                     alert('주문');
                     setClickedTable();
                     setTemporaryOrder([]);
+                    clearMenuCount();
                     let localItem = JSON.parse(myStorage.getItem(selectedTable.tableNumber));
-                    localItem == null ? 
-                    myStorage.setItem(selectedTable.tableNumber,`${JSON.stringify(temporaryOrder)}`)
-                    : myStorage.setItem(selectedTable.tableNumber,`${JSON.stringify([...localItem,...temporaryOrder])}`)
-                    myStorage.setItem('kitchen',(myStorage.getItem(selectedTable.tableNumber)));
+                    localItem == null ? //스토리지에 아이템이 없다면?
+                   <>
+                   {myStorage.setItem(selectedTable.tableNumber,`${JSON.stringify(temporaryOrder)}`)}
+                   </>  
+                    :
+                    <>
+                    {myStorage.setItem(selectedTable.tableNumber,`${JSON.stringify([...localItem,...temporaryOrder])}`)}
+                    </>
+                    {
+                     let kitchen = myStorage.getItem('kitchen');
+                      // myStorage.setItem('kitchen',myStorage.getItem(kitchen))
+                                            
+                      myStorage.setItem(`kitchen${selectedTable.tableNumber}`,myStorage.getItem(selectedTable.tableNumber));
+                     
+                    }
+
                     }}>주문</Button>
                 
                   <Button primary onClick={()=>{
                     alert('결제')
+                    console.log(JSON.parse(myStorage.getItem(selectedTable.tableNumber)));
+                    console.log(new Date());
                     setTemporaryOrder([]);
                     setClickedTable();
                     myStorage.removeItem(clickedTable.toString())
+                    
                   }}>결제</Button>
 
                   <Button secondary onClick={()=>{
                     alert('주문취소');
                     setClickedTable();
                     setTemporaryOrder([]);
-                    myStorage.removeItem(clickedTable.toString())
+                    myStorage.removeItem(clickedTable.toString());
+                    myStorage.removeItem(`kitchen${clickedTable}`.toString());
                     }}>주문취소</Button>
                   </Segment>
 
@@ -236,7 +299,7 @@ function TableGroup(props){ // 기본
 //   )
 // }
 
-function ReservationList(){ // 예약탭
+function ReservationList(){ // 예약탭 서버에서 불러온 데이터로 구성될 예정
     const paragraph = <ImageComponent src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
 
     return(    
@@ -317,7 +380,7 @@ function ReservationList(){ // 예약탭
     )
 }
 
-function WaitingList(){  //대기탭
+function WaitingList(){  //대기탭 미정
     const paragraph = <ImageComponent src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
 
     return(    
@@ -412,7 +475,7 @@ function WaitingList(){  //대기탭
     )
 }
 
-function FindReceipe(){ //영수증조회탭
+function FindReceipe(){ //영수증조회탭 서버에서 불러온 데이터로 구성될 예정
     let [data,setData] = useState([
         {date:'2023-01-06',value:'오후 4:49',menu:['막창2개','밥2인분','김']},
         {date:'2023-01-06',value:'오후 4:50',menu:['곱창2개','밥2인분','치킨']},
@@ -421,14 +484,6 @@ function FindReceipe(){ //영수증조회탭
         {date:'2023-01-06',value:'오후 4:53',menu:['양배추','오미자','청양고추']},
         {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
         {date:'2023-01-06',value:'오후 4:55',menu:['칭따오','밥2인분','청양고추']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
-        {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
         {date:'2023-01-06',value:'오후 4:54',menu:['마라탕','밥2인분','간장계란밥']},
       ])
     let [viewData,setViewData]=useState([]);
@@ -495,28 +550,50 @@ function isOrder(){
 }
 
 function OrderList(){ //주방탭
-  let [order,setOrder]=useState([JSON.parse(myStorage.getItem('kitchen'))]);
-  // let [order,setOrder]=useState(['a','b']);
+  
+  console.log(Object.keys(localStorage));
+  let kitchenOrder= Object.keys(localStorage).filter((e)=>e.length>6).sort();
+  let [st,setSt] = useState(kitchenOrder);
+  console.log(kitchenOrder);
     return(
-      {}
-      
-        // <List divided relaxed size="large">
-        //     <List.Item>
-        //     <List.Icon name='food' size='large' verticalAlign='middle' />
-        //     <List.Content>
-        //         <List.Header as='a'>오징어 볶음</List.Header>
-        //         <Button onClick={()=>{
-        //             console.log(order);
+      <Segment>
+        <Header as='h3' block >주방임</Header>
+        {kitchenOrder.map((e,i)=>{
+          return(
+            <List divided relaxed size="large" key={i}>
+              <Segment>
+              <Header as='h2' icon='food' content={e + '번 주문서'}/>
+              <Button onClick={()=>{
+                      myStorage.removeItem(e);
+                      setSt(kitchenOrder.splice(e,1));
+                    }} floated="right">✔</Button>
+            {JSON.parse(myStorage.getItem(e)).map((e)=>{
+              
+              return(
+                <List.Item>
+                <List.Content>
+                    <List.Header as='a'>{e.product}</List.Header>
+                    <List.Description as='a'>{e.count}개  {Number.parseInt((new Date() - e.time)/1000/60)}분 전 주문</List.Description>
+                </List.Content>
+                </List.Item>
+              )
+            })}
+            </Segment>
+            </List>
+            )
+          
+        })}
 
-        //         }} floated="right">✔</Button>
-        //         <List.Description as='a'>3T Updated 10 mins ago</List.Description>
-        //     </List.Content>
-        //     </List.Item>
-        // </List>
+            
+            
+          
+       
+            
+        </Segment>
     )
 }
 
-function ReviewComment(){ //리뷰조회탭
+function ReviewComment(){ //리뷰조회탭 서버에서 불러온 데이터로 구성될 예정
     return(
         <Comment.Group threaded>
             <Header as='h3' dividing>
@@ -560,7 +637,7 @@ function ReviewComment(){ //리뷰조회탭
                     <Comment.Metadata>
                     <span>Just now</span>
                     </Comment.Metadata>
-                    <Comment.Text>Elliot you are always so right :)</Comment.Text>
+                    <Comment.Text>Elliot you are always so right :</Comment.Text>
                     <Comment.Actions>
                     <a>Reply</a>
                     </Comment.Actions>
@@ -591,7 +668,7 @@ function ReviewComment(){ //리뷰조회탭
     )
 }
 
-function Setting(){ //설정탭
+function Setting(){ //설정탭 서버에, 계정에 저장
   return(
     <>
     <Item.Group divided>

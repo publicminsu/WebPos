@@ -92,6 +92,12 @@ function TableGroup(props){ // 기본
     //   return 0;
     // }
 
+    function getTotal(){
+      JSON.parse(myStorage.getItem((clickedTable).toString())).map((e)=>{
+        setTotal(total + e.price);
+      })
+    }
+
     let [total,setTotal] = useState(0);
     return(
         <>
@@ -99,6 +105,7 @@ function TableGroup(props){ // 기본
         
         <Card.Group itemsPerRow={5}>
         {table.map((e,i)=>{
+          
           
             return(
                 <Card 
@@ -150,8 +157,8 @@ function TableGroup(props){ // 기본
                       {JSON.parse(myStorage.getItem((clickedTable).toString())) != null ?
                       <>
                       {
+                        
                       JSON.parse(myStorage.getItem((clickedTable).toString())).map((e)=>{
-                                                
                         return(
                           
                           <TableRow>
@@ -160,6 +167,7 @@ function TableGroup(props){ // 기본
                             <Table.Cell>{e.price}</Table.Cell>
                             <Table.Cell>{e.count}</Table.Cell>
                           </TableRow>
+                          
                         )
                       })
                     }
@@ -196,7 +204,7 @@ function TableGroup(props){ // 기본
                   </Segment>
                   <Segment>
                     
-                    <h1>{`가격: ${total}`}</h1>
+                    <h1>{`가격: ${myStorage.getItem(`${selectedTable.tableNumber}sum`)?JSON.parse(myStorage.getItem(`${selectedTable.tableNumber}sum`))+total: total}`}</h1>
                   </Segment>
               </Grid.Column>
               <Grid.Column>
@@ -204,6 +212,7 @@ function TableGroup(props){ // 기본
                     setClickedTable();
                     setTemporaryOrder([]);
                     clearMenuCount();
+                    setTotal(0)
                   }}>X</Button></Segment>
                   <Segment>
                     <Card.Group itemsPerRow={2}>
@@ -216,6 +225,7 @@ function TableGroup(props){ // 기본
                           e.tableNumber = selectedTable.tableNumber;
                           e.time = new Date().getTime();
                           e.count = e.count + 1;
+                          setTotal(total + e.price);
                           // temporaryOrder.push(e);
                           // (e.count ==1 ? temporaryOrder.push(e) : null)
                           if(e.count ==1) temporaryOrder.push(e);
@@ -243,6 +253,10 @@ function TableGroup(props){ // 기본
                     setClickedTable();
                     setTemporaryOrder([]);
                     clearMenuCount();
+                    myStorage.getItem(`${selectedTable.tableNumber}sum`)?
+                    myStorage.setItem(`${selectedTable.tableNumber}sum`,JSON.parse(myStorage.getItem(`${selectedTable.tableNumber}sum`))+total)
+                    :myStorage.setItem(`${selectedTable.tableNumber}sum`,total);
+                    setTotal(0)
                     let localItem = JSON.parse(myStorage.getItem(selectedTable.tableNumber));
                     localItem == null ? //스토리지에 아이템이 없다면?
                    <>
@@ -268,7 +282,9 @@ function TableGroup(props){ // 기본
                     console.log(new Date());
                     setTemporaryOrder([]);
                     setClickedTable();
+                    setTotal(0)
                     myStorage.removeItem(clickedTable.toString())
+                    myStorage.removeItem(`${clickedTable}sum`.toString());
                     
                   }}>결제</Button>
 
@@ -276,8 +292,10 @@ function TableGroup(props){ // 기본
                     alert('주문취소');
                     setClickedTable();
                     setTemporaryOrder([]);
+                    setTotal(0)
                     myStorage.removeItem(clickedTable.toString());
                     myStorage.removeItem(`kitchen${clickedTable}`.toString());
+                    myStorage.removeItem(`${clickedTable}sum`.toString());
                     }}>주문취소</Button>
                   </Segment>
 
@@ -286,6 +304,7 @@ function TableGroup(props){ // 기본
               </Grid.Column>
           </Grid.Row>
         </Grid>   }
+        
         
     
         </>
@@ -593,92 +612,104 @@ function OrderList(){ //주방탭
     )
 }
 
-function ReviewComment(){ //리뷰조회탭 서버에서 불러온 데이터로 구성될 예정
-    return(
-        <Comment.Group threaded>
-            <Header as='h3' dividing>
-            Comments
-            </Header>
+// function ReviewComment(){ //리뷰조회탭 서버에서 불러온 데이터로 구성될 예정
+//     return(
+//         <Comment.Group threaded>
+//             <Header as='h3' dividing>
+//             Comments
+//             </Header>
 
-            <Comment>
-            <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
-            <Comment.Content>
-                <Comment.Author as='a'>Matt</Comment.Author>
-                <Comment.Metadata>
-                <span>Today at 5:42PM</span>
-                </Comment.Metadata>
-                <Comment.Text>How artistic!</Comment.Text>
-                <Comment.Actions>
-                <a>Reply</a>
-                </Comment.Actions>
-            </Comment.Content>
-            </Comment>
+//             <Comment>
+//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
+//             <Comment.Content>
+//                 <Comment.Author as='a'>Matt</Comment.Author>
+//                 <Comment.Metadata>
+//                 <span>Today at 5:42PM</span>
+//                 </Comment.Metadata>
+//                 <Comment.Text>How artistic!</Comment.Text>
+//                 <Comment.Actions>
+//                 <a>Reply</a>
+//                 </Comment.Actions>
+//             </Comment.Content>
+//             </Comment>
 
-            <Comment>
-            <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' />
-            <Comment.Content>
-                <Comment.Author as='a'>Elliot Fu</Comment.Author>
-                <Comment.Metadata>
-                <span>Yesterday at 12:30AM</span>
-                </Comment.Metadata>
-                <Comment.Text>
-                <p>This has been very useful for my research. Thanks as well!</p>
-                </Comment.Text>
-                <Comment.Actions>
-                <a>Reply</a>
-                </Comment.Actions>
-            </Comment.Content>
+//             <Comment>
+//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' />
+//             <Comment.Content>
+//                 <Comment.Author as='a'>Elliot Fu</Comment.Author>
+//                 <Comment.Metadata>
+//                 <span>Yesterday at 12:30AM</span>
+//                 </Comment.Metadata>
+//                 <Comment.Text>
+//                 <p>This has been very useful for my research. Thanks as well!</p>
+//                 </Comment.Text>
+//                 <Comment.Actions>
+//                 <a>Reply</a>
+//                 </Comment.Actions>
+//             </Comment.Content>
 
-            <Comment.Group>
-                <Comment>
-                <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
-                <Comment.Content>
-                    <Comment.Author as='a'>Jenny Hess</Comment.Author>
-                    <Comment.Metadata>
-                    <span>Just now</span>
-                    </Comment.Metadata>
-                    <Comment.Text>Elliot you are always so right :</Comment.Text>
-                    <Comment.Actions>
-                    <a>Reply</a>
-                    </Comment.Actions>
-                </Comment.Content>
-                </Comment>
-            </Comment.Group>
-            </Comment>
+//             <Comment.Group>
+//                 <Comment>
+//                 <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
+//                 <Comment.Content>
+//                     <Comment.Author as='a'>Jenny Hess</Comment.Author>
+//                     <Comment.Metadata>
+//                     <span>Just now</span>
+//                     </Comment.Metadata>
+//                     <Comment.Text>Elliot you are always so right :</Comment.Text>
+//                     <Comment.Actions>
+//                     <a>Reply</a>
+//                     </Comment.Actions>
+//                 </Comment.Content>
+//                 </Comment>
+//             </Comment.Group>
+//             </Comment>
 
-            <Comment>
-            <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />
-            <Comment.Content>
-                <Comment.Author as='a'>Joe Henderson</Comment.Author>
-                <Comment.Metadata>
-                <span>5 days ago</span>
-                </Comment.Metadata>
-                <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-                <Comment.Actions>
-                <a>Reply</a>
-                </Comment.Actions>
-            </Comment.Content>
-            </Comment>
+//             <Comment>
+//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />
+//             <Comment.Content>
+//                 <Comment.Author as='a'>Joe Henderson</Comment.Author>
+//                 <Comment.Metadata>
+//                 <span>5 days ago</span>
+//                 </Comment.Metadata>
+//                 <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
+//                 <Comment.Actions>
+//                 <a>Reply</a>
+//                 </Comment.Actions>
+//             </Comment.Content>
+//             </Comment>
 
-            <Form reply>
-            <Form.TextArea />
-            <Button content='Add Reply' labelPosition='left' icon='edit' primary />
-            </Form>
-        </Comment.Group>
-    )
-}
+//             <Form reply>
+//             <Form.TextArea />
+//             <Button content='Add Reply' labelPosition='left' icon='edit' primary />
+//             </Form>
+//         </Comment.Group>
+//     )
+// }
 
 function Setting(){ //설정탭 서버에, 계정에 저장
   return(
     <>
-    <Item.Group divided>
+    <div>
+    <Header as='h4' attached='top'>
+      계정 관리
+    </Header>
+    <Segment attached>
+    <Item>
+    <Icon name='question circle' size='large' />
+      <Item.Content verticalAlign='middle' as='a'>계정 정보 수정</Item.Content>      
+    </Item>
+    </Segment>
+    </div>
+    <div>
+    <Header as='h4' attached='top'>
+      매장 관리
+    </Header>
+    <Segment attached>
+      <Item.Group>
     <Item>
     <Icon name='home' size='large' />
       <Item.Content verticalAlign='middle' as='a'>매장 정보 수정</Item.Content>
-    </Item>
-    <Item>
-    <Icon name='question circle' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>계정 정보 수정</Item.Content>
     </Item>
     <Item>
     <Icon name='list' size='large' />
@@ -688,10 +719,32 @@ function Setting(){ //설정탭 서버에, 계정에 저장
     <Icon name='chess board' size='large' />
       <Item.Content verticalAlign='middle' as='a'>테이블 배치</Item.Content>
     </Item>
+    </Item.Group>
+    </Segment>
+  </div>
+  <div>
+    <Header as='h4' attached='top'>
+      통계 조회
+    </Header>
+    <Segment attached>
+      <Item.Group>
     <Item>
     <Icon name='dollar sign' size='large' />
       <Item.Content verticalAlign='middle' as='a'>매출 통계</Item.Content>
     </Item>
+    <Item>
+    <Icon name='thumbs up' size='large' />
+      <Item.Content verticalAlign='middle' as='a'>리뷰 조회 </Item.Content>
+    </Item>
+    </Item.Group>
+    </Segment>
+  </div>
+  <div>
+    <Header as='h4' attached='top'>
+      시스템 설정
+    </Header>
+    <Segment attached>
+    <Item.Group>
     <Item>
     <Icon name='laptop' size='large' />  
       <Item.Content verticalAlign='middle' as='a'>환경 설정</Item.Content>
@@ -700,11 +753,10 @@ function Setting(){ //설정탭 서버에, 계정에 저장
     <Icon name='question circle' size='large' />
       <Item.Content verticalAlign='middle' as='a'>시스템 정보</Item.Content>
     </Item>
+    </Item.Group>
+    </Segment>
+  </div>
     
-    
-
-    
-  </Item.Group>
   </>
   )
 }
@@ -715,6 +767,6 @@ export{
     WaitingList,
     FindReceipe,
     OrderList,
-    ReviewComment,
+    // ReviewComment,
     Setting
 }

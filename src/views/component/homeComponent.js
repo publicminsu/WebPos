@@ -3,6 +3,8 @@ import { Rail,Icon,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Mes
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import './homeComponent.css'
+import { EditUserInfo,EditMarketInfo,EditMenu,EditTable,SalesStatistics,ReviewComment,EditPreferences,SystemInfo, } from "./settingComponent";
+
 
 let myStorage = window.localStorage; // 로컬스토리지 선언
 
@@ -279,7 +281,9 @@ function TableGroup(props){ // 기본
                   <Button primary onClick={()=>{
                     alert('결제')
                     console.log(JSON.parse(myStorage.getItem(selectedTable.tableNumber)));
+                    console.log(JSON.parse(myStorage.getItem(`${selectedTable.tableNumber}sum`)));
                     console.log(new Date());
+                    console.log('서버에 결제요청');
                     setTemporaryOrder([]);
                     setClickedTable();
                     setTotal(0)
@@ -576,7 +580,7 @@ function OrderList(){ //주방탭
   console.log(kitchenOrder);
     return(
       <Segment>
-        <Header as='h3' block >주방임</Header>
+        <Header as='h5' block >주방임</Header>
         {kitchenOrder.map((e,i)=>{
           return(
             <List divided relaxed size="large" key={i}>
@@ -612,93 +616,24 @@ function OrderList(){ //주방탭
     )
 }
 
-// function ReviewComment(){ //리뷰조회탭 서버에서 불러온 데이터로 구성될 예정
-//     return(
-//         <Comment.Group threaded>
-//             <Header as='h3' dividing>
-//             Comments
-//             </Header>
 
-//             <Comment>
-//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
-//             <Comment.Content>
-//                 <Comment.Author as='a'>Matt</Comment.Author>
-//                 <Comment.Metadata>
-//                 <span>Today at 5:42PM</span>
-//                 </Comment.Metadata>
-//                 <Comment.Text>How artistic!</Comment.Text>
-//                 <Comment.Actions>
-//                 <a>Reply</a>
-//                 </Comment.Actions>
-//             </Comment.Content>
-//             </Comment>
-
-//             <Comment>
-//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' />
-//             <Comment.Content>
-//                 <Comment.Author as='a'>Elliot Fu</Comment.Author>
-//                 <Comment.Metadata>
-//                 <span>Yesterday at 12:30AM</span>
-//                 </Comment.Metadata>
-//                 <Comment.Text>
-//                 <p>This has been very useful for my research. Thanks as well!</p>
-//                 </Comment.Text>
-//                 <Comment.Actions>
-//                 <a>Reply</a>
-//                 </Comment.Actions>
-//             </Comment.Content>
-
-//             <Comment.Group>
-//                 <Comment>
-//                 <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
-//                 <Comment.Content>
-//                     <Comment.Author as='a'>Jenny Hess</Comment.Author>
-//                     <Comment.Metadata>
-//                     <span>Just now</span>
-//                     </Comment.Metadata>
-//                     <Comment.Text>Elliot you are always so right :</Comment.Text>
-//                     <Comment.Actions>
-//                     <a>Reply</a>
-//                     </Comment.Actions>
-//                 </Comment.Content>
-//                 </Comment>
-//             </Comment.Group>
-//             </Comment>
-
-//             <Comment>
-//             <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />
-//             <Comment.Content>
-//                 <Comment.Author as='a'>Joe Henderson</Comment.Author>
-//                 <Comment.Metadata>
-//                 <span>5 days ago</span>
-//                 </Comment.Metadata>
-//                 <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-//                 <Comment.Actions>
-//                 <a>Reply</a>
-//                 </Comment.Actions>
-//             </Comment.Content>
-//             </Comment>
-
-//             <Form reply>
-//             <Form.TextArea />
-//             <Button content='Add Reply' labelPosition='left' icon='edit' primary />
-//             </Form>
-//         </Comment.Group>
-//     )
-// }
-
-function Setting(){ //설정탭 서버에, 계정에 저장
+function Manager(){ 
+  let [state,setState]=useState([])
+  let [option,setOption] = useState();
   return(
-    <>
+  !option?
+        <>
     <div>
     <Header as='h4' attached='top'>
       계정 관리
     </Header>
     <Segment attached>
+      <Item.Group>
     <Item>
     <Icon name='question circle' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>계정 정보 수정</Item.Content>      
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditUserInfo')}} >계정 정보 수정</Item.Content>      
     </Item>
+    </Item.Group>
     </Segment>
     </div>
     <div>
@@ -709,20 +644,21 @@ function Setting(){ //설정탭 서버에, 계정에 저장
       <Item.Group>
     <Item>
     <Icon name='home' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>매장 정보 수정</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditMarketInfo')}}>매장 정보 수정</Item.Content>
     </Item>
+
     <Item>
     <Icon name='list' size='large' />
-      <Item.Content verticalAlign='middle' as='a' >메뉴 수정</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditMenu')}}>메뉴 수정</Item.Content>
     </Item>
     <Item>
     <Icon name='chess board' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>테이블 배치</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditTable')}}>테이블 배치</Item.Content>
     </Item>
     </Item.Group>
     </Segment>
-  </div>
-  <div>
+    </div>
+    <div>
     <Header as='h4' attached='top'>
       통계 조회
     </Header>
@@ -730,16 +666,16 @@ function Setting(){ //설정탭 서버에, 계정에 저장
       <Item.Group>
     <Item>
     <Icon name='dollar sign' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>매출 통계</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('SalesStatistics')}}>매출 통계</Item.Content>
     </Item>
     <Item>
     <Icon name='thumbs up' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>리뷰 조회 </Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('ReviewComment')}}>리뷰 조회 </Item.Content>
     </Item>
     </Item.Group>
     </Segment>
-  </div>
-  <div>
+    </div>
+    <div>
     <Header as='h4' attached='top'>
       시스템 설정
     </Header>
@@ -747,19 +683,44 @@ function Setting(){ //설정탭 서버에, 계정에 저장
     <Item.Group>
     <Item>
     <Icon name='laptop' size='large' />  
-      <Item.Content verticalAlign='middle' as='a'>환경 설정</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditPreferences')}}>환경 설정</Item.Content>
     </Item>
     <Item>
     <Icon name='question circle' size='large' />
-      <Item.Content verticalAlign='middle' as='a'>시스템 정보</Item.Content>
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('SystemInfo')}}>시스템 정보</Item.Content>
     </Item>
     </Item.Group>
     </Segment>
-  </div>
-    
-  </>
+    </div>
+
+    </>
+
+      
+
+:   
+    <>
+    <Segment attached>
+    <Header as='h5'>
+    <Icon style={{cursor:'pointer'}} onClick={()=>{setOption(!option)}} name='angle left'/>
+      {`관리자 / ${state}`}
+      </Header>
+    {state=='EditUserInfo'?<EditUserInfo/>:null}
+    {state=='EditMarketInfo'?<EditMarketInfo/>:null}
+    {state=='EditMenu'?<EditMenu/>:null}
+    {state=='EditTable'?<EditTable/>:null}
+    {state=='SalesStatistics'?<SalesStatistics/>:null}
+    {state=='ReviewComment'?<ReviewComment/>:null}
+    {state=='EditPreferences'?<EditPreferences/>:null}
+    {state=='SystemInfo'?<SystemInfo/>:null}
+    </Segment>
+    </>
+  
+
   )
 }
+
+
+
 
 export{
     TableGroup,
@@ -768,5 +729,5 @@ export{
     FindReceipe,
     OrderList,
     // ReviewComment,
-    Setting
+    Manager
 }

@@ -1,7 +1,7 @@
 import {React,useState,createRef} from "react";
 import { Label,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, Sticky } from "semantic-ui-react";
 import { Link, useNavigate } from 'react-router-dom'
-import {TableGroup,ReservationList,WaitingList,FindReceipe,OrderList,ReviewComment,Setting } from './component/homeComponent.js'
+import {TableGroup,ReservationList,WaitingList,FindReceipe,OrderList,ReviewComment,Manager } from './component/homeComponent.js'
 
 function Home(){
     let navigate = useNavigate();
@@ -55,8 +55,8 @@ function Home(){
             {menu =='대기' ? <WaitingList/> : null}
             {menu =='주방' ? <OrderList/> : null}
             {menu =='영수증 조회' ? <FindReceipe/> : null}
-            {menu =='리뷰 조회' ? <ReviewComment/> : null}
-            {menu =='설정' ? <Setting/> : null}
+            
+            {menu =='설정' ? <Manager/> : null}
         </Grid.Column>
       </Grid>
         </Container>

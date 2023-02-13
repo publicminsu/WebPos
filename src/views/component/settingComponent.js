@@ -10,7 +10,7 @@ function EditUserInfo(){
         <Form>
         <Form.Field>
           <label>닉네임</label>
-          <input placeholder='First Name' value='알베르 카뮈' />
+          <input placeholder='First Name' value='장 폴 사르트르' />
         </Form.Field>
         <Form.Field>
           <label>현재 비밀번호</label>
@@ -164,35 +164,51 @@ function EditTable(){
   const trackPos = (data) => {
     setPosition({ x: data.x, y: data.y });
   };
-  const handleStart = () => {
+  const handleStart = (data) => {
     setOpacity(true);
-    console.log(position.x.toFixed(0),position.y.toFixed(0))
+    console.log(`x좌표:${data.x.toFixed(0)} y좌표:${data.y.toFixed(0)}`)
   };
-  const handleEnd = () => {
+  const handleEnd = (event,data) => {
+    console.log(data);
     setOpacity(false);
   };
     return(
-      <Grid style={{height:'100%'}}>
-        <Grid.Column stretched width={12}>
-        <Segment>
+     <>
+      <Menu  fluid style={{borderBottom:'1px solid lightGrey '}}>
+        <Menu.Item><Button onClick={()=>{
+          setTable([...table,{tableNumber:table.length+1,tableName:'기본석',x:0,y:0}]) 
+        console.log(table)}}>테이블</Button></Menu.Item>
+        <Menu.Item><Button>단체석</Button></Menu.Item>
+        <Menu.Item><Button>카운터</Button></Menu.Item>
+        <Menu.Item><Button primary onClick={()=>{
+          console.log(table);
+          localStorage.setItem('tableSetting',JSON.stringify(table));
+        }}>Save</Button></Menu.Item>
+      </Menu>
+
           {table.map((e,i)=>{
             return(
               <Draggable
               nodeRef={nodeRef}
-              onDrag={(e, data) => trackPos(data)}
-              onStart={handleStart}
-              onStop={handleEnd}
+              onDrag={(e, data)=>trackPos(data)}
+              onStart={(e,data)=>handleStart(data)}
+              onStop={(event,data)=>{
+                handleEnd(event,data);
+                e.x=(data.x+40).toFixed(0);
+                e.y=(data.y+40).toFixed(0);
+                
+              }}
             >
               <div
                 ref={nodeRef}
-                style={{ opacity: Opacity ? "0.6" : "1", width:'90px' }}            
+                style={{ opacity: Opacity ? "0.6" : "1", width:'90px', position:'absolute'}}            
               >
                 <Card 
                 color="green"
-                style={{height:'30%', overflow:'hidden'}}>
+                style={{height:'30%' , overflow:'hidden'}}>
                   <Card.Content >
-                    <Card.Header content={`${i}${e}`}/>
-                    <Card.Meta content={`기본석`} />
+                    <Card.Header content={`${i+1}T`}/>
+                    <Card.Meta content={e.tableName} />
                   </Card.Content>
                 </Card>
               </div>
@@ -200,67 +216,7 @@ function EditTable(){
             )
           })}
         
-        </Segment>
-      </Grid.Column>
-      <Grid.Column width={4}>
-        <Menu style={{height:'100%'}} fluid vertical tabular>
-          <Menu.Item
-            name='1x1 테이블'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }  
-          />
-          <Menu.Item
-            name='2x2테이블'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Menu.Item
-            name='3x3 테이블'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Menu.Item
-            name='4x4 테이블'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Menu.Item
-            name='문'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Menu.Item
-            name='다찌 테이블'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Menu.Item
-            name='카운터'
-            onClick={()=>{
-              setTable([...table,'T']);
-            }
-          }
-          />
-          <Button onClick={()=>{alert('저장')}} primary fluid style={{marginTop:'100%'}}>
-            Save
-          </Button>
-        </Menu>
-      </Grid.Column>
-
-      
-    </Grid>
+     </>
     )
 }
 
@@ -268,7 +224,8 @@ function SalesStatistics(){
     return(
       <>
         <h2>통계임</h2>
-        <h2>어쩌구저쩌구</h2>
+        <h2>그래프임</h2>
+        <h2>등등등임</h2>
         </>
     )
 }

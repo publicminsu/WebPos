@@ -11,25 +11,26 @@ let myStorage = window.localStorage; // 로컬스토리지 선언
 //로컬스토리지는 도메인만 같으면 값을 공유함
 //그러므로 사용자의 아이디로 url을 달리 해야할듯
 //  ex) localhost:3000/start/joonmoogo
+let tableSetting = myStorage.getItem('tableSetting')? JSON.parse(myStorage.getItem('tableSetting')) : [
+  {tableNumber:1,tableName:'red'},
+  {tableNumber:2,tableName:'yellow'},
+  {tableNumber:3,tableName:'olive'},
+  {tableNumber:4,tableName:'green'},
+  {tableNumber:5,tableName:'teal'},
+  {tableNumber:6,tableName:'blue'},
+  {tableNumber:7,tableName:'violet'},
+  {tableNumber:8,tableName:'purple'},
+  {tableNumber:9,tableName:'pink'},
+  {tableNumber:10,tableName:'예약'},
+  {tableNumber:11,tableName:'yellow'},
+  {tableNumber:12,tableName:'예약'},
+  {tableNumber:13,tableName:'혼밥'},
+  {tableNumber:14,tableName:'혼밥'},
+  {tableNumber:15,tableName:'혼밥'},
+];
 
 function TableGroup(props){ // 기본
-    let [table,setTable]=useState([
-      {tableNumber:1,tableName:'red'},
-      {tableNumber:2,tableName:'yellow'},
-      {tableNumber:3,tableName:'olive'},
-      {tableNumber:4,tableName:'green'},
-      {tableNumber:5,tableName:'teal'},
-      {tableNumber:6,tableName:'blue'},
-      {tableNumber:7,tableName:'violet'},
-      {tableNumber:8,tableName:'purple'},
-      {tableNumber:9,tableName:'pink'},
-      {tableNumber:10,tableName:'예약'},
-      {tableNumber:11,tableName:'yellow'},
-      {tableNumber:12,tableName:'예약'},
-      {tableNumber:13,tableName:'혼밥'},
-      {tableNumber:14,tableName:'혼밥'},
-      {tableNumber:15,tableName:'혼밥'},
-    ]);
+    let [table,setTable]=useState(tableSetting);
 
     //서버에서 받을 데이터 가입시 기본설정
 
@@ -101,11 +102,13 @@ function TableGroup(props){ // 기본
     }
 
     let [total,setTotal] = useState(0);
+    let margin=30;
     return(
         <>
         {!clickedTable ? 
         
-        <Card.Group itemsPerRow={5}>
+        <>
+        <Card.Group>
         {table.map((e,i)=>{
           
           
@@ -113,13 +116,13 @@ function TableGroup(props){ // 기본
                 <Card 
                 color="green"
                 // style={{backgroundColor:'teal'}} 
-                style={{height:'30%', overflow:'hidden'}}
+                style={{width: '90px', height:'80px', overflow:'hidden', position:'absolute', top:`${e.y}px`, left:`${e.x}px`}} // 이거 수정하셈 테이블세팅 
                 onClick={()=>{
                   setClickedTable(`${e.tableNumber}`);
                 }}>
                   <Card.Content >
                     <Card.Header content={`${e.tableNumber} T`} />
-                    <Card.Meta content={`${e.tableName}석`} />
+                    <Card.Meta content={`${e.tableName}`} />
                     {myStorage.getItem(e.tableNumber.toString()) == null 
                     ?<Card.Description content=''/> 
                     :JSON.parse(myStorage.getItem(e.tableNumber)).map((e)=>{
@@ -131,10 +134,13 @@ function TableGroup(props){ // 기본
                   
                   </Card.Content>
                 </Card>
+                
+                
+                
             )
         })}
-                  
-        </Card.Group> 
+                  </Card.Group>
+                  </>
         :<Grid columns='equal' relaxed>
           <Grid.Row>
               <Grid.Column>
@@ -575,7 +581,7 @@ function isOrder(){
 function OrderList(){ //주방탭
   
   console.log(Object.keys(localStorage));
-  let kitchenOrder= Object.keys(localStorage).filter((e)=>e.length>6).sort();
+  let kitchenOrder= Object.keys(localStorage).filter((e)=>e.length>6&&e.length<11).sort();
   let [st,setSt] = useState(kitchenOrder);
   console.log(kitchenOrder);
     return(
@@ -699,7 +705,7 @@ function Manager(){
 
 :   
     <>
-    <Segment attached>
+    <Segment attached >
     <Header as='h5'>
     <Icon style={{cursor:'pointer'}} onClick={()=>{setOption(!option)}} name='angle left'/>
       {`관리자 / ${state}`}

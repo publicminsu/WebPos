@@ -7,7 +7,7 @@ function Home(){
     let navigate = useNavigate();
     let [menu,setMenu]= useState('기본');
     let [tableGroup,setTableGroup] = useState(false);
-    let [option,setOption]=useState(['기본','예약','대기','영수증 조회','주방','리뷰 조회','설정']);
+    let [option,setOption]=useState(['기본','예약','대기','영수증 조회','주방','관리자']);
     let [labelOption,setLabelOption] = useState([0,3,9,0,0,1,0]);
     const hstyle = {
         marginTop:'18px'
@@ -56,7 +56,7 @@ function Home(){
             {menu =='주방' ? <OrderList/> : null}
             {menu =='영수증 조회' ? <FindReceipe/> : null}
             
-            {menu =='설정' ? <Manager/> : null}
+            {menu =='관리자' ? <Manager/> : null}
         </Grid.Column>
       </Grid>
         </Container>

@@ -29,8 +29,11 @@ let tableSetting = myStorage.getItem('tableSetting')? JSON.parse(myStorage.getIt
   {tableNumber:15,tableName:'혼밥'},
 ];
 
+let counterSetting = myStorage.getItem('counterSetting')? JSON.parse(myStorage.getItem('counterSetting')): [  {tableNumber:10,tableName:'예약'}];
+
 function TableGroup(props){ // 기본
     let [table,setTable]=useState(tableSetting);
+    let [counter,setCounter]=useState(counterSetting);
 
     //서버에서 받을 데이터 가입시 기본설정
 
@@ -116,7 +119,7 @@ function TableGroup(props){ // 기본
                 <Card 
                 color="green"
                 // style={{backgroundColor:'teal'}} 
-                style={{width: '90px', height:'80px', overflow:'hidden', position:'absolute', top:`${e.y}px`, left:`${e.x}px`}} // 이거 수정하셈 테이블세팅 
+                style={{width:`${e.w?e.w:'90px'}`, height:`${e.h?e.h:'80px'}`, overflow:'hidden', position:'absolute', top:`${e.y}px`, left:`${e.x}px`}} // 이거 수정하셈 테이블세팅 
                 onClick={()=>{
                   setClickedTable(`${e.tableNumber}`);
                 }}>
@@ -138,6 +141,20 @@ function TableGroup(props){ // 기본
                 
                 
             )
+        })}
+        {counter.map((e,i)=>{
+          return(
+            <Card 
+            
+            // style={{backgroundColor:'teal'}} 
+            style={{ width:`${e.w?e.w:'90px'}`, height:`${e.h?e.h:'80px'}`, overflow:'hidden', position:'absolute', top:`${e.y}px`, left:`${e.x}px`}} // 이거 수정하셈 테이블세팅 
+            >
+              <Card.Content >
+                
+                
+              </Card.Content>
+            </Card>
+          )
         })}
                   </Card.Group>
                   </>
@@ -705,7 +722,7 @@ function Manager(){
 
 :   
     <>
-    <Segment attached >
+    <Segment attached  >
     <Header as='h5'>
     <Icon style={{cursor:'pointer'}} onClick={()=>{setOption(!option)}} name='angle left'/>
       {`관리자 / ${state}`}

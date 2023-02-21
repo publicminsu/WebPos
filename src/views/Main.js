@@ -26,7 +26,7 @@ function Main(){
 
 
           <Button color='teal' fluid size='large' onClick={()=>{
-            navigate('/start');
+            navigate('/home');
           }}>
             time to work
           </Button>

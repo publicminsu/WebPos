@@ -1,6 +1,6 @@
 import {React,useState,createRef} from "react";
 import { Label,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, Sticky } from "semantic-ui-react";
-import { Link, useNavigate } from 'react-router-dom'
+import { Route,Link, useNavigate } from 'react-router-dom'
 import {TableGroup,ReservationList,WaitingList,FindReceipe,OrderList,ReviewComment,Manager } from './component/homeComponent.js'
 
 function Home(){
@@ -12,6 +12,7 @@ function Home(){
     const hstyle = {
         marginTop:'18px'
     }
+    
     let contextRef = createRef();
     return(
 

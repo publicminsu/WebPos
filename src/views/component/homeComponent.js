@@ -1,9 +1,9 @@
 import {React,useState} from "react";
 import { Rail,Icon,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, TableRow } from "semantic-ui-react";
-import { Link, useNavigate } from 'react-router-dom'
+import { Route,Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import './homeComponent.css'
-import { EditUserInfo,EditMarketInfo,EditMenu,EditTable,SalesStatistics,ReviewComment,EditPreferences,SystemInfo, } from "./settingComponent";
+import { EditUserInfo,EditMarketInfo,EditMenu,EditTable,SalesStatistics,ReviewComment,EditPreferences,SystemInfo, QrCode, } from "./settingComponent";
 
 
 let myStorage = window.localStorage; // 로컬스토리지 선언
@@ -29,11 +29,18 @@ let tableSetting = myStorage.getItem('tableSetting')? JSON.parse(myStorage.getIt
   {tableNumber:15,tableName:'혼밥'},
 ];
 
+
+
 let counterSetting = myStorage.getItem('counterSetting')? JSON.parse(myStorage.getItem('counterSetting')): [  {tableNumber:10,tableName:'예약'}];
 
 function TableGroup(props){ // 기본
     let [table,setTable]=useState(tableSetting);
     let [counter,setCounter]=useState(counterSetting);
+    table.map((e,i)=>{
+      localStorage.setItem(`secretNumber${i+1}`,Math.round(Math.random()*99999999));
+    })
+
+
 
     //서버에서 받을 데이터 가입시 기본설정
 
@@ -245,7 +252,7 @@ function TableGroup(props){ // 기본
                       {menuList.map((e,i)=>{
                         return(
 
-                        <Card onClick={()=>{
+                        <Card color="teal" onClick={()=>{
                           
                           e.tableNumber = selectedTable.tableNumber;
                           e.time = new Date().getTime();
@@ -678,6 +685,10 @@ function Manager(){
     <Icon name='chess board' size='large' />
       <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('EditTable')}}>테이블 배치</Item.Content>
     </Item>
+    <Item>
+    <Icon name='qrcode' size='large' />
+      <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('QrCode')}}>QR Code</Item.Content>
+    </Item>
     </Item.Group>
     </Segment>
     </div>
@@ -735,6 +746,7 @@ function Manager(){
     {state=='ReviewComment'?<ReviewComment/>:null}
     {state=='EditPreferences'?<EditPreferences/>:null}
     {state=='SystemInfo'?<SystemInfo/>:null}
+    {state=='QrCode'?<QrCode item={tableSetting}/>:null}
     </Segment>
     </>
   

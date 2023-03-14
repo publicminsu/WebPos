@@ -3,9 +3,9 @@ import { TextArea,Label,Input,Divider,Checkbox,Rail,Icon,Comment,Table,List,Imag
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
+import axios from "axios";
 
 function EditUserInfo(){
-    
     return(
         <Form>
         <Form.Field>
@@ -150,7 +150,14 @@ function EditMenu(){
         </Grid.Row>
         </Grid>
         <h1></h1>
-        <Button>변경</Button>
+        <Button onClick={()=>{
+          axios.get('https://port-0-server-for-tableorder-r8xoo2mlehe66wy.sel3.cloudtype.app/data').then((res)=>{
+            console.log(res.data)
+          })
+          .catch(()=>{
+            console.log('실패함')
+          })
+        }}>변경</Button>
       </>
     )
 
@@ -448,7 +455,7 @@ function QrCode(props){
     })}
     
     <a href="https://ko.online-qrcode-generator.com/">qr생성사이트</a>
-    <h1>알아서 만들어라</h1>
+    <h1>qr은 셀프</h1>
     </>
     
     

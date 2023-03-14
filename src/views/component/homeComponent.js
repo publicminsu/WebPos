@@ -4,9 +4,24 @@ import { Route,Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import './homeComponent.css'
 import { EditUserInfo,EditMarketInfo,EditMenu,EditTable,SalesStatistics,ReviewComment,EditPreferences,SystemInfo, QrCode, } from "./settingComponent";
+import socket from "../../socket-client";
+import { Notify } from "notiflix";
+// const audio = new Audio('https://www.fesliyanstudios.com/play-mp3/5450');
+
 
 
 let myStorage = window.localStorage; // 로컬스토리지 선언
+socket.on('userOrder',(data)=>{
+  if(data){
+  console.log(data);
+  myStorage.setItem(data[0].tableNumber,JSON.stringify(data));
+  Notify.success('1번 테이블 주문요청');
+  // audio.play();
+  }
+  else{
+    return null;
+  }
+})
 
 //로컬스토리지는 도메인만 같으면 값을 공유함
 //그러므로 사용자의 아이디로 url을 달리 해야할듯
@@ -34,6 +49,7 @@ let tableSetting = myStorage.getItem('tableSetting')? JSON.parse(myStorage.getIt
 let counterSetting = myStorage.getItem('counterSetting')? JSON.parse(myStorage.getItem('counterSetting')): [  {tableNumber:10,tableName:'예약'}];
 
 function TableGroup(props){ // 기본
+  
     let [table,setTable]=useState(tableSetting);
     let [counter,setCounter]=useState(counterSetting);
     table.map((e,i)=>{
@@ -168,7 +184,7 @@ function TableGroup(props){ // 기본
         :<Grid columns='equal' relaxed>
           <Grid.Row>
               <Grid.Column>
-                  <Segment><h1>{`${clickedTable}번 테이블`}</h1></Segment>
+                  <Segment><Header as='h2'>{`${clickedTable}번 테이블`}</Header></Segment>
                   <Segment className="no-scroll" style={{overflow:'scroll',height:'60%'}}>
                   <Table fixed singleLine selectable >
                   <Table.Header>
@@ -236,7 +252,7 @@ function TableGroup(props){ // 기본
                   </Segment>
                   <Segment>
                     
-                    <h1>{`가격: ${myStorage.getItem(`${selectedTable.tableNumber}sum`)?JSON.parse(myStorage.getItem(`${selectedTable.tableNumber}sum`))+total: total}`}</h1>
+                    <Header as='h3'>{`가격: ${myStorage.getItem(`${selectedTable.tableNumber}sum`)?JSON.parse(myStorage.getItem(`${selectedTable.tableNumber}sum`))+total: total} Won`}</Header >
                   </Segment>
               </Grid.Column>
               <Grid.Column>
@@ -650,6 +666,7 @@ function OrderList(){ //주방탭
 function Manager(){ 
   let [state,setState]=useState([])
   let [option,setOption] = useState();
+  let navigate = useNavigate();
   return(
   !option?
         <>
@@ -724,6 +741,15 @@ function Manager(){
       <Item.Content verticalAlign='middle' as='a' onClick={()=>{setOption(!option);setState('SystemInfo')}}>시스템 정보</Item.Content>
     </Item>
     </Item.Group>
+    </Segment>
+    <Segment>
+    <Item>
+      <Button fluid primary onClick={()=>{
+        alert('localStorage 삭제');
+        navigate(-2);
+        localStorage.clear();
+      }}>LogOut</Button>
+    </Item>
     </Segment>
     </div>
 

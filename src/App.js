@@ -1,4 +1,6 @@
 import logo from './logo.svg';
+
+
 import './App.css';
 import LoginForm from './views/LoginForm';
 import SignUp from './views/SignUp';
@@ -9,6 +11,12 @@ import { Container,Button, Form, Grid, Header, Image, Message, Segment } from 's
 import { useState } from 'react';
 import Loading from './views/Loading';
 import UserOrder from './views/UserOrder';
+const audio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
+
+
+// document.body.addEventListener('mousedown',()=>{
+//   audio.play();
+// })
 
 
 function App() {
@@ -32,6 +40,7 @@ function App() {
       <Route path='/main' element={<Main></Main>}/>
       <Route path='/detail' element={<div>디테일 페이지임</div>}/>
       <Route path='/signUp' element={<SignUp></SignUp>}/>
+      <Route path='/test' element={<UserOrder option={1}></UserOrder>}/>
       <Route path='*' element={<div>페이지가 만료됨</div>}/>
       <Route path='/home' element={<Home></Home>}/>
 

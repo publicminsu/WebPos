@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;800&family=Noto+Sans+KR&display=swap');
+*{
+  font-family: 'Noto Sans KR', sans-serif;
+}

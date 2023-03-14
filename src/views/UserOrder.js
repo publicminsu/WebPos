@@ -1,6 +1,11 @@
 import {React,useState} from "react";
 import { TableRow,Tab,Label,Comment,Table,List,Image as ImageComponent,Item,Card,Menu,Message,Grid,Header,Button,Form,Segment,Image,Container, Sticky } from "semantic-ui-react";
 import './component/homeComponent.css'
+import socket from "../socket-client";
+import { Notify,Report } from "notiflix";
+
+
+
 
 
 let tableSetting = localStorage.getItem('tableSetting')? JSON.parse(localStorage.getItem('tableSetting')) : [
@@ -24,6 +29,15 @@ let tableSetting = localStorage.getItem('tableSetting')? JSON.parse(localStorage
   
 
 function UserOrder(props){
+  let [speech,setSpeech] = useState('');
+
+  const recognition = new window.webkitSpeechRecognition();
+  recognition.start();
+
+  recognition.onresult = (event) => {
+    setSpeech(event.results[0][0].transcript);
+    console.log(speech);
+  }
     const panes = [
         { menuItem: '메인 메뉴', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
         { menuItem: '사이드 메뉴', render: () => <Tab.Pane>Tab 2 Content</Tab.Pane> },
@@ -58,6 +72,8 @@ function UserOrder(props){
           {product:'반미',price:1500,count:0},
         ])
       }
+      
+
 
     return(
         <>
@@ -100,8 +116,8 @@ function UserOrder(props){
                       JSON.parse(localStorage.getItem((props.option).toString())).map((e)=>{
                         return(
                           
-                          <TableRow>                            
-                            <Table.Cell>{`${e.product} / ${e.price}원 / ${e.count}개`}</Table.Cell>                            
+                          <TableRow style={{backgroundColor:'lightgrey'}}>                            
+                            <Table.Cell>{`${e.product} / ${e.price}원 / ${e.count}개 주문완료`}</Table.Cell>                            
                           </TableRow>
                           
                         )
@@ -139,17 +155,26 @@ function UserOrder(props){
         </Segment>
         <Segment>
             <Button color="teal" onClick={()=>{
-                alert('주문');
+              temporaryOrder.length==0?
+                Report.warning('메뉴가 비었는데요?','','OKAY'):
+                socket.emit('order',temporaryOrder)
+                setTemporaryOrder([]);
+                                            
             }}>주문</Button>
             <Button color="red" onClick={()=>{
+              
                 setTemporaryOrder([]);
                 setTotal(0);
                 clearMenuCount();
+              
             }}>취소</Button>
 
         </Segment>
         </>
     )
 }
+
+
+
 
 export default UserOrder
